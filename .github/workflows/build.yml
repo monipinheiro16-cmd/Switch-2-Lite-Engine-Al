@@ -1,0 +1,43 @@
+name: Build & Test Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-linux-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
+
+      - name: Build and Run Unit Tests
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          ctest --output-on-failure
+
+  build-switch-nro:
+    runs-on: ubuntu-latest
+    needs: build-linux-tests
+    container:
+      image: devkitpro/devkita64:latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Homebrew NRO Stub
+        run: |
+          mkdir build_nx
+          cd build_nx
+          cmake -DDEVKITPRO=$DEVKITPRO ..
+          make
