@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+# Definição global da lista de fontes para evitar escopos vazios
 set(SOURCES
     src/cpu_engine.cpp
     src/gpu_translation.cpp
@@ -22,7 +23,6 @@ set(SOURCES
 if(DEFINED ENV{DEVKITPRO})
     message(STATUS "Configurando para Nintendo Switch (libnx / deko3d)")
     add_executable(switch2_lite_engine src/main.cpp ${SOURCES})
-    # Configurações específicas do libnx seriam aplicadas aqui
 else()
     message(STATUS "Configurando para Host (Testes Automatizados)")
     add_library(engine_core STATIC ${SOURCES})
